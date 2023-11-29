@@ -7,6 +7,7 @@ import 'dart:async' as da;
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
+import 'package:flame_rive/flame_rive.dart';
 
 
 import 'package:flutter/foundation.dart';
@@ -34,6 +35,8 @@ class CheckersGame extends FlameGame {
     await Flame.images.load(
       'tree.png',
     );
+    // final ab = await loadArtboard(RiveFile.asset(
+    //     'birb.riv'));
     board = Board(boardSize: Size(boardWidth, boardHeight), priority: 0,);
 
 
@@ -53,8 +56,10 @@ class CheckersGame extends FlameGame {
       pieces.add(
         Piece(
           tileSize: tileSize,
-          sprite: tree(tileSize, tileSize),
+          artboard: await loadArtboard(RiveFile.asset(
+              'birb.riv'),),
           position: randomPosition,
+          size: Vector2(tileSize, tileSize)
         ),
       );
     }
@@ -69,6 +74,7 @@ class CheckersGame extends FlameGame {
 
     add(board);
     removePieces(boardWidth, boardHeight);
+
   }
 
 

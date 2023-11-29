@@ -1,39 +1,59 @@
 import 'dart:ui';
-
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_rive/flame_rive.dart';
 
 import 'package:flutter/material.dart';
 
 import 'board.dart';
 
-class Piece extends SpriteComponent with DragCallbacks, ParentIsA<Board>{
+class Piece extends RiveComponent with DragCallbacks, ParentIsA<Board>{
   final double tileSize;
 
-  Piece({super.position, super.sprite, required this.tileSize, super.anchor, super.size, super.priority});
+  Piece({super.position, required this.tileSize, super.anchor, super.size, super.priority, required super.artboard});
 
   double py = 0.0;
   double px = 0.0;
+  SMIBool? smiBool;
+  SMITrigger? smiTrigger;
+
+  @override
+  Future<void> onLoad() async {
+    // final skillsArtboard =
+    // await loadArtboard(RiveFile.asset('birb.riv'));
+
+    final controller = StateMachineController.fromArtboard(
+      artboard,
+      "birb",
+    );
+
+    smiBool = controller!.findSMI('dance');
+    smiTrigger = controller!.findSMI('look up');
+
+    artboard.addController(controller!);
+
+    //
+    // add(RiveComponent(artboard: skillsArtboard, position: Vector2(-(width / 2) + 31, -(width / 2) + 31), size: Vector2(tileSize,tileSize)));
+  }
 
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
     if(isDragged) {
-      add(
-        OpacityEffect.to(
-          0.7,
-          EffectController(duration: 0.4),
-        ),
-      );
+      // add(
+      //   OpacityEffect.to(
+      //     0.7,
+      //     EffectController(duration: 0.4),
+      //   ),
+      // );
     } else {
-      add(
-        OpacityEffect.fadeIn(
-          EffectController(duration: 0.75),
-        ),
-      );
+      // add(
+      //   OpacityEffect.fadeIn(
+      //     EffectController(duration: 0.75),
+      //   ),
+      // );
     }
   }
 
@@ -45,13 +65,17 @@ class Piece extends SpriteComponent with DragCallbacks, ParentIsA<Board>{
 
 
   @override
-  void onDragStart(event) {
+  void onDragStart(event) async {
     try {
       super.onDragStart(event);
       debugPrint('Drag started $position');
       px = position.x;
       py = position.y;
       priority = 25;
+
+      smiTrigger?.fire();
+      await Future.delayed(const Duration(milliseconds: 500));
+      smiBool?.value = true;
     } catch(e) {
       debugPrint(e.toString());
     }
@@ -101,6 +125,7 @@ class Piece extends SpriteComponent with DragCallbacks, ParentIsA<Board>{
         }
       }
       priority = 0;
+      smiBool?.value = false;
       debugPrint('Drag ended');
     } catch(e) {
       debugPrint(e.toString());
@@ -108,9 +133,9 @@ class Piece extends SpriteComponent with DragCallbacks, ParentIsA<Board>{
 
   }
 
-  @override
-  set debugMode(bool debugMode) {
-    super.debugMode = false;
-  }
+  // @override
+  // set debugMode(bool debugMode) {
+  //   super.debugMode = false;
+  // }
 
 }

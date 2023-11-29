@@ -9,8 +9,8 @@ import 'package:flame/game.dart';
 import 'main.dart';
 
 class Board extends PositionComponent {
-  @override
-  bool get debugMode => false;
+  // @override
+  // bool get debugMode => false;
 
   final Size boardSize;
   final int rows = 5;
@@ -19,10 +19,10 @@ class Board extends PositionComponent {
   Board({required this.boardSize, super.priority, super.children, super.anchor, super.position});
 
 
-  @override
-  set debugMode(bool debugMode) {
-    super.debugMode = false;
-  }
+  // @override
+  // set debugMode(bool debugMode) {
+  //   super.debugMode = false;
+  // }
 
   @override
   void render(Canvas c) {
